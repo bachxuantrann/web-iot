@@ -1,0 +1,28 @@
+.card-item {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.icon {
+    width: 80px; // Kích thước icon
+    height: auto;
+    // Tạo khoảng cách giữa icon và nội dung
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-content h3 {
+    font-size: 20px;
+    color: gray;
+    margin: 0;
+}
+
+.card-content h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 0;
+}

@@ -1,0 +1,206 @@
+{
+    "devices": [
+        {
+            "id": 1,
+            "name": "Đèn phòng khách",
+            "type": "light",
+            "status": "on",
+            "location": "Phòng khách",
+            "created_at": "2025-02-09T08:00:00Z"
+        },
+        {
+            "id": 2,
+            "name": "Quạt trần",
+            "type": "fan",
+            "status": "off",
+            "location": "Phòng ngủ",
+            "created_at": "2025-02-08T15:30:00Z"
+        },
+        {
+            "id": 3,
+            "name": "Đèn phòng ngủ",
+            "type": "light",
+            "status": "off",
+            "location": "Phòng ngủ",
+            "created_at": "2025-02-09T08:30:00Z"
+        }
+    ],
+    "device_history": [
+        {
+            "id": 1,
+            "device_id": 1,
+            "device_name": "Đèn phòng khách",
+            "status": "off",
+            "timestamp": "2025-02-09T09:00:00Z"
+        },
+        {
+            "id": 2,
+            "device_id": 2,
+            "device_name": "Quạt trần",
+            "status": "on",
+            "timestamp": "2025-02-09T10:15:00Z"
+        },
+        {
+            "id": 3,
+            "device_id": 1,
+            "device_name": "Đèn phòng khách",
+            "status": "on",
+            "timestamp": "2025-02-09T11:00:00Z"
+        },
+        {
+            "id": 4,
+            "device_id": 2,
+            "device_name": "Quạt trần",
+            "status": "off",
+            "timestamp": "2025-02-09T12:10:00Z"
+        },
+        {
+            "id": 5,
+            "device_id": 1,
+            "device_name": "Đèn phòng khách",
+            "status": "off",
+            "timestamp": "2025-02-09T13:15:00Z"
+        },
+        {
+            "id": 6,
+            "device_id": 2,
+            "device_name": "Quạt trần",
+            "status": "on",
+            "timestamp": "2025-02-09T16:30:00Z"
+        },
+        {
+            "id": 7,
+            "device_id": 1,
+            "device_name": "Đèn phòng khách",
+            "status": "on",
+            "timestamp": "2025-02-09T17:35:00Z"
+        },
+        {
+            "id": 8,
+            "device_id": 2,
+            "device_name": "Quạt trần",
+            "status": "off",
+            "timestamp": "2025-02-09T19:45:00Z"
+        },
+        {
+            "id": 9,
+            "device_id": 1,
+            "device_name": "Đèn phòng khách",
+            "status": "off",
+            "timestamp": "2025-02-09T20:50:00Z"
+        },
+        {
+            "id": 10,
+            "device_id": 3,
+            "device_name": "Đèn phòng ngủ",
+            "status": "on",
+            "timestamp": "2025-02-09T10:00:00Z"
+        },
+        {
+            "id": 11,
+            "device_id": 3,
+            "device_name": "Đèn phòng ngủ",
+            "status": "off",
+            "timestamp": "2025-02-09T15:00:00Z"
+        }
+    ],
+    "sensor_history": [
+        {
+            "id": 1,
+            "temperature": 28.5,
+            "humidity": 65,
+            "light_intensity": 120,
+            "timestamp": "2025-02-09T08:05:00Z"
+        },
+        {
+            "id": 2,
+            "temperature": 29.2,
+            "humidity": 60,
+            "light_intensity": 110,
+            "timestamp": "2025-02-09T09:10:00Z"
+        },
+        {
+            "id": 3,
+            "temperature": 27.8,
+            "humidity": 66,
+            "light_intensity": 115,
+            "timestamp": "2025-02-09T10:15:00Z"
+        },
+        {
+            "id": 4,
+            "temperature": 30.1,
+            "humidity": 58,
+            "light_intensity": 100,
+            "timestamp": "2025-02-09T11:20:00Z"
+        },
+        {
+            "id": 5,
+            "temperature": 29.5,
+            "humidity": 62,
+            "light_intensity": 105,
+            "timestamp": "2025-02-09T12:25:00Z"
+        },
+        {
+            "id": 6,
+            "temperature": 28.9,
+            "humidity": 64,
+            "light_intensity": 118,
+            "timestamp": "2025-02-09T13:30:00Z"
+        },
+        {
+            "id": 7,
+            "temperature": 30.5,
+            "humidity": 59,
+            "light_intensity": 90,
+            "timestamp": "2025-02-09T14:35:00Z"
+        },
+        {
+            "id": 8,
+            "temperature": 31.0,
+            "humidity": 55,
+            "light_intensity": 80,
+            "timestamp": "2025-02-09T15:40:00Z"
+        },
+        {
+            "id": 9,
+            "temperature": 29.8,
+            "humidity": 61,
+            "light_intensity": 95,
+            "timestamp": "2025-02-09T16:45:00Z"
+        },
+        {
+            "id": 10,
+            "temperature": 28.3,
+            "humidity": 67,
+            "light_intensity": 130,
+            "timestamp": "2025-02-09T17:50:00Z"
+        },
+        {
+            "id": 11,
+            "temperature": 27.5,
+            "humidity": 70,
+            "light_intensity": 140,
+            "timestamp": "2025-02-09T18:55:00Z"
+        },
+        {
+            "id": 12,
+            "temperature": 26.9,
+            "humidity": 72,
+            "light_intensity": 150,
+            "timestamp": "2025-02-09T19:00:00Z"
+        }
+    ],
+    "users": [
+        {
+            "avatar": "tran xuan bach",
+            "name": "Trần Xuân Bách",
+            "dob": "20/10/2003",
+            "student_id": "B21DCPT056",
+            "github": "https://github.com/bachxuantrann",
+            "bio": "Sinh viên năm 4 chuyên ngành Phát triển ứng dụng",
+            "report": "https://link-to-report.com/report.pdf",
+            "apiDocs": "https://link-to-api-docs.com",
+            "email": "bachxuantrann@gmail.com"
+        }
+    ]
+}
