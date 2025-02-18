@@ -1,14 +1,13 @@
 const mongoose = require("mongoose");
-const { PORT } = require("./system.js");
-const mongoDBURL =
-    "mongodb+srv://bachxuantrann2003:20102003@iotdatabase.lhzod.mongodb.net/iotdatabase?retryWrites=true&w=majority&appName=iotdatabase";
+const port = process.env.PORT;
+const mongoDBURL = process.env.MONGODBURL;
 module.exports.connect = async (app) => {
     mongoose
         .connect(mongoDBURL)
         .then(() => {
             console.log("Connected to MongoDB");
-            app.listen(PORT, () => {
-                console.log(`Server is running on port ${PORT}`);
+            app.listen(port, () => {
+                console.log(`Server is running on port ${port}`);
             });
         })
         .catch((err) => {
