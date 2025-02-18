@@ -9,6 +9,10 @@ const DeviceHistorySchema = new mongoose.Schema(
         },
         device_name: { type: String, required: true },
         status: { type: String, required: true },
+        createdAt: {
+            type: Date,
+            default: () => new Date(Date.now() + 7 * 60 * 60 * 1000),
+        },
     },
     { timestamps: { createdAt: true, updatedAt: false } }
 );
