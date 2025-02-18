@@ -45,6 +45,7 @@ module.exports.getDeviceHistory = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
 module.exports.getAndFind = async (req, res) => {
     try {
         let { datetime, page, limit } = req.query;
