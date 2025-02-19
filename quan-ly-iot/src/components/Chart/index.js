@@ -8,6 +8,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    Filler,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import plugin zoom
@@ -21,16 +22,19 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    zoomPlugin // Đăng ký plugin zoom
+    zoomPlugin,
+    Filler
+    // Đăng ký plugin zoom,
 );
 
 function DashBoardChart({ data }) {
+    const safeData = Array.isArray(data) ? data : [];
     const chartData = {
-        labels: data.map((item) => new Date(item.timestamp)),
+        labels: safeData.map((item) => new Date(item.createdAt)),
         datasets: [
             {
                 label: "Độ ẩm (%)",
-                data: data.map((item) => item.humidity),
+                data: safeData.map((item) => item.humidity),
                 borderColor: "#3B82F6",
                 backgroundColor: "rgba(59, 130, 246, 0.2)",
                 tension: 0.4,
@@ -38,7 +42,7 @@ function DashBoardChart({ data }) {
             },
             {
                 label: "Nhiệt độ (°C)",
-                data: data.map((item) => item.temperature),
+                data: safeData.map((item) => item.temperature),
                 borderColor: "#EF4444",
                 backgroundColor: "rgba(239, 68, 68, 0.2)",
                 tension: 0.4,
@@ -46,7 +50,7 @@ function DashBoardChart({ data }) {
             },
             {
                 label: "Cường độ ánh sáng (Lux)",
-                data: data.map((item) => item.light_intensity),
+                data: safeData.map((item) => item.light_intensity),
                 borderColor: "#FACC15",
                 backgroundColor: "rgba(250, 204, 21, 0.2)",
                 tension: 0.4,
@@ -95,21 +99,24 @@ function DashBoardChart({ data }) {
                 type: "time",
                 time: {
                     displayFormats: {
+                        minute: "HH:mm", // Chỉ hiển thị giờ và phút
                         hour: "dd/MM HH:mm",
                         day: "dd/MM/yy",
                         week: "dd/MM/yy",
                         month: "MM/yyyy",
                     },
+                    tooltipFormat: "dd/MM/yyyy HH:mm", // Định dạng khi hover vào điểm dữ liệu
                 },
                 ticks: {
-                    source: "data",
-                    autoSkip: false,
-                    maxRotation: 0,
-                    minRotation: 0,
-                    maxTicksLimit: 100,
+                    source: "auto", // Tự động lấy dữ liệu từ nguồn
+                    autoSkip: true, // Bật tự động bỏ bớt nhãn để không bị sát nhau
+                    maxTicksLimit: 10, // Chỉ hiển thị tối đa 10 nhãn trên trục X
+                    stepSize: 5, // Cách nhau ít nhất 5 điểm dữ liệu
+                    maxRotation: 45, // Xoay nhãn 45 độ để dễ đọc
+                    minRotation: 30, // Giảm tối thiểu 30 độ nếu có quá nhiều nhãn
                 },
                 grid: {
-                    display: false,
+                    display: false, // Ẩn lưới dọc
                 },
             },
             y: {

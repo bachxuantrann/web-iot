@@ -30,7 +30,9 @@ function Dashboard() {
         };
         fetchData();
     }, []);
-
+    console.log("dataLatest", dataLatest);
+    console.log("datachart", dataChart.sensorHistory);
+    console.log("data devices", devices);
     // Các thông số hiện tại dùng cho các CardItem
     const temp = {
         title: "Nhiệt độ",
@@ -47,8 +49,6 @@ function Dashboard() {
         desc: dataLatest.light,
         color: "#facc15",
     };
-
-    console.log(devices);
     return (
         <>
             <h1>Tổng Quan</h1>
@@ -81,7 +81,7 @@ function Dashboard() {
             <Row style={{ marginTop: "20px" }}>
                 <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
                     <div style={{ height: "400px", width: "100%" }}>
-                        <DashBoardChart data={dataChart} />
+                        <DashBoardChart data={dataChart.sensorHistory} />
                     </div>
                 </Col>
             </Row>

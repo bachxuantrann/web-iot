@@ -2,7 +2,7 @@ import { formatTimestamp } from "../utils/formatData";
 import { get } from "../utils/request";
 
 export const getDeviceData = async (type) => {
-    const result = await get("device_history");
+    const result = await get("api/devices");
     const resultFormat = result.map((item) => ({
         ...item,
         timestamp: formatTimestamp(item.timestamp),
@@ -25,6 +25,6 @@ export const getDeviceData = async (type) => {
     }
 };
 export const getDevice = async () => {
-    const result = await get("devices");
+    const result = await get("api/devices");
     return result;
 };
