@@ -38,7 +38,7 @@ module.exports.getAndFind = async (req, res) => {
                         message: "Invalid value for searching",
                     });
                 }
-                searchCondition[field] = { $gte: value - 5, $lte: value + 5 };
+                searchCondition[field] = { $gte: value - 1, $lte: value + 1 };
             }
         });
         // Handle order
