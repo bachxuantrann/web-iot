@@ -14,7 +14,7 @@ export const routes = [
                 element: <Dashboard />,
             },
             {
-                path: "/lich-su-thiet-bi/:name",
+                path: "/lich-su-thiet-bi",
                 element: <HistoryDevice />,
             },
             {
