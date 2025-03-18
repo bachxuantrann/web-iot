@@ -31,22 +31,23 @@ module.exports.addDeviceHistory = async (req, res) => {
 module.exports.getAndFind = async (req, res) => {
     try {
         let { page, limit, datetime } = req.query;
-
+        console.log("datetime: " + datetime);
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 10;
         const offset = (page - 1) * limit;
         let searchCondition = {};
         if (datetime) {
-            console.log("ma hoa datetime", datetime);
-            const decodedDatetime = decodeURIComponent(datetime);
-            console.log("decoded datetime", decodedDatetime);
-            const targetDate = new Date(decodedDatetime);
+            datetime = decodeURIComponent(datetime);
+            console.log(datetime);
+            const originaDatetime = moment(datetime).format(
+                "YYYY-MM-DD HH:mm:ss"
+            );
+            const targetDate = new Date(originaDatetime);
             if (isNaN(targetDate.getTime())) {
                 return res.status(400).json({
                     message: "Thời gian tìm kiếm không hợp lệ",
                 });
             }
-
             const startOfMinute = new Date(targetDate);
             startOfMinute.setSeconds(0, 0);
             const endOfMinute = new Date(targetDate);
@@ -57,16 +58,7 @@ module.exports.getAndFind = async (req, res) => {
                 [Op.lte]: endOfMinute,
             };
         }
-        // SQL query
-        // SELECT COUNT(*) AS total
-        // FROM devicehistories
-        // WHERE created_at BETWEEN '2025-03-16 14:31:00' AND '2025-03-16 14:31:59';
 
-        // SELECT *
-        // FROM devicehistories
-        // WHERE created_at BETWEEN '2025-03-16 14:31:00' AND '2025-03-16 14:31:59'
-        // ORDER BY created_at DESC
-        // LIMIT 10 OFFSET 20;
         const { rows: devicesHistoryWithTimezone, count: total } =
             await DeviceHistory.findAndCountAll({
                 where: searchCondition,
@@ -123,6 +115,17 @@ module.exports.getLatestDeviceStatus = async (req, res) => {
         res.status(500).json({ message: "Lỗi server!", error: error.message });
     }
 };
+
+// SQL query
+// SELECT COUNT(*) AS total
+// FROM devicehistories
+// WHERE created_at BETWEEN '2025-03-16 14:31:00' AND '2025-03-16 14:31:59';
+
+// SELECT *
+// FROM devicehistories
+// WHERE created_at BETWEEN '2025-03-16 14:31:00' AND '2025-03-16 14:31:59'
+// ORDER BY created_at DESC
+// LIMIT 10 OFFSET 20;
 // Develope more
 // module.exports.getDeviceHistory = async (req, res) => {
 //     try {

@@ -5,9 +5,9 @@ export const getDeviceHistory = async (page, limit, datetime = "") => {
     params.append("page", page);
     params.append("limit", limit);
     if (datetime) {
-        params.append("datetime", encodeURIComponent(datetime));
+        let formatDatetime = datetime.replace(" ", "T");
+        params.append("datetime", formatDatetime);
     }
-
     const url = `api/devices-history?${params.toString()}`;
     console.log("Fetching URL:", url);
 
@@ -29,7 +29,7 @@ export const getDeviceHistory = async (page, limit, datetime = "") => {
 
         return { formattedData, pagination };
     } catch (error) {
-        console.error("Fetch error:", error);
+        console.log("Fetch error:", error);
         return { formattedData: [], pagination: {} };
     }
 };
