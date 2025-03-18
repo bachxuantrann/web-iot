@@ -45,9 +45,9 @@ function HistoryData() {
             sortField ? { sort: sortField, order: sortOrder } : {}
         );
     };
-    console.log(data);
-    console.log(pagination);
-    console.log(searchValue);
+    // console.log(data);
+    // console.log(pagination);
+    // console.log(searchValue);
     const handleSearch = () => {
         if (searchValue === "") {
             setSearchField("");
@@ -161,6 +161,7 @@ function HistoryData() {
                     <Option value="light_intensity">
                         Cường độ ánh sáng (lx)
                     </Option>
+                    <Option value="created_at">Thời gian</Option>
                 </Select>
                 <Select
                     value={sortOrder}

@@ -1,20 +1,35 @@
-const mongoose = require("mongoose");
-
-const DeviceHistorySchema = new mongoose.Schema(
+const { DataTypes, DATE } = require("sequelize");
+const { sequelize } = require("../config/database");
+const DeviceHistory = sequelize.define(
+    "DeviceHistory",
     {
-        device_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Device", // Giả sử model Device được đăng ký với tên "Device"
-            required: true,
+        id: {
+            type: DataTypes.UUID,
+            primaryKey: true,
+            allowNull: false,
+            defaultValue: DataTypes.UUIDV4,
         },
-        device_name: { type: String, required: true },
-        status: { type: String, required: true },
-        createdAt: {
-            type: Date,
-            default: () => new Date(Date.now() + 7 * 60 * 60 * 1000),
+        device_id: {
+            type: DataTypes.CHAR(24),
+            allowNull: false,
+        },
+        device_name: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+        status: {
+            type: DataTypes.ENUM("Tắt", "Bật"),
+            allowNull: false,
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
         },
     },
-    { timestamps: { createdAt: true, updatedAt: false } }
+    {
+        tableName: "devicehistories",
+        timestamps: false,
+    }
 );
-
-module.exports = mongoose.model("DeviceHistory", DeviceHistorySchema);
+module.exports = DeviceHistory;

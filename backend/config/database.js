@@ -1,16 +1,21 @@
-const mongoose = require("mongoose");
-const port = process.env.PORT;
-const mongoDBURL = process.env.MONGODBURL;
-module.exports.connect = async (app) => {
-    mongoose
-        .connect(mongoDBURL)
-        .then(() => {
-            console.log("Connected to MongoDB");
-            app.listen(port, () => {
-                console.log(`Server is running on port ${port}`);
-            });
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+const Sequelize = require("sequelize");
+const database = process.env.DB_NAME;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASS;
+const dbHost = process.env.DB_HOST;
+const sequelize = new Sequelize(database, user, password, {
+    host: dbHost,
+    dialect: "mysql",
+    timezone: "+07:00",
+});
+
+const connect = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("Database connected successfully!");
+    } catch (err) {
+        console.error("Error connecting to the database:", err.message);
+    }
 };
+
+module.exports = { sequelize, connect };

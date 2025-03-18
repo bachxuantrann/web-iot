@@ -1,16 +1,36 @@
-const mongoose = require("mongoose");
-
-const SensorHistorySchema = new mongoose.Schema(
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../config/database");
+const SensorHistory = sequelize.define(
+    "SensorHistory",
     {
-        temperature: { type: Number, required: true },
-        humidity: { type: Number, required: true },
-        light_intensity: { type: Number, required: true },
-        createdAt: {
-            type: Date,
-            default: () => new Date(Date.now() + 7 * 60 * 60 * 1000),
+        id: {
+            type: DataTypes.UUID,
+            primaryKey: true,
+            allowNull: false,
+            defaultValue: DataTypes.UUIDV4,
+        },
+        temperature: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        humidity: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        light_intensity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
         },
     },
-    { timestamps: { createdAt: true, updatedAt: false } }
+    {
+        tableName: "sensorhistories",
+        timestamps: false,
+    }
 );
 
-module.exports = mongoose.model("SensorHistory", SensorHistorySchema);
+module.exports = SensorHistory;

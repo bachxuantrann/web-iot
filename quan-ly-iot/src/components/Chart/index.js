@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import plugin zoom
+import dayjs from "dayjs";
 
 // Đăng ký các thành phần cần thiết của Chart.js
 ChartJS.register(
@@ -30,7 +31,7 @@ ChartJS.register(
 function DashBoardChart({ data }) {
     const safeData = Array.isArray(data) ? data : [];
     const chartData = {
-        labels: safeData.map((item) => new Date(item.createdAt)),
+        labels: safeData.map((item) => new Date(item.created_at)),
         datasets: [
             {
                 label: "Độ ẩm (%)",

@@ -2,16 +2,21 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
-const database = require("./config/database.js");
+const port = process.env.PORT;
 const app = express();
+const setupSwagger = require("./swagger.js");
+const { connect } = require("./config/database.js");
+connect();
 app.use(
     cors({
-        origin: "*", // Chấp nhận tất cả các domain
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Chấp nhận tất cả phương thức
-        allowedHeaders: ["Content-Type", "Authorization"], // Cho phép các header này
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 app.use(express.json());
-database.connect(app);
+
+app.listen(port, () => console.log(`Server is running on port ${port}`));
 const routes = require("./routes/index-route.js");
 routes(app);
+setupSwagger(app);

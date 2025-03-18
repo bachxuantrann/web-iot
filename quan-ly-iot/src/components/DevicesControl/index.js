@@ -1,51 +1,79 @@
 import { Switch, Row, Col, notification } from "antd";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./DevicesControl.scss";
+import {
+    postDeviceHistory,
+    getLatestDeviceStatus,
+} from "../../services/deviceHistoryService";
 
 function DevicesControl() {
-    const showNotification = (content, action) => {
-        notification.success({
+    const showNotification = (content, action, type = "success") => {
+        notification[type]({
             message: "Thông báo",
-            description: `Bạn đã ${action} thành công ${content}`,
-            duration: 3,
-            type: "success",
+            description:
+                type === "success"
+                    ? `Bạn đã ${action} thành công ${content}`
+                    : `Không thể ${action} ${content}. Vui lòng thử lại!`,
+            duration: 2,
         });
     };
     const [devices, setDevices] = useState([
         {
-            id: 1,
-            name: "Đèn phòng khách",
-            type: "light",
-            status: "on",
+            id: "led1",
+            name: "Đèn LED 1",
+            status: "Tắt",
         },
         {
-            id: 2,
-            name: "Quạt trần",
-            type: "fan",
-            status: "off",
+            id: "led2",
+            name: "Đèn LED 2",
+            status: "Tắt",
         },
         {
-            id: 3,
-            name: "Đèn phòng ngủ",
-            type: "light",
-            status: "off",
+            id: "led3",
+            name: "Đèn LED 3",
+            status: "Tắt",
         },
     ]);
-    const handleSwitch = (device) => {
+    const fetchDeviceStatus = async () => {
+        try {
+            const response = await getLatestDeviceStatus();
+            if (response && response.devices) {
+                setDevices(
+                    response.devices.map((device) => ({
+                        id: device.device_id,
+                        name: device.device_name,
+                        status: device.status,
+                    }))
+                );
+            }
+        } catch (error) {
+            console.log("Lỗi lấy trạng thái thiết bị", error);
+        }
+    };
+    useEffect(() => {
+        fetchDeviceStatus();
+    }, []);
+    const handleSwitch = async (device) => {
         const { id, name, status } = device;
-        let action = status === "on" ? "tắt" : "bật";
-        setDevices((prevDevices) =>
-            prevDevices.map((device) =>
-                device.id === id
-                    ? {
-                          ...device,
-                          status: device.status === "on" ? "off" : "on",
-                      }
-                    : device
-            )
-        );
-        showNotification(name, action);
+        let action = status === "Bật" ? "tắt" : "bật";
+        let reponse = await postDeviceHistory(id, name, status);
+        if (reponse) {
+            setDevices((prevDevices) =>
+                prevDevices.map((device) =>
+                    device.id === id
+                        ? {
+                              ...device,
+                              status: device.status === "Bật" ? "Tắt" : "Bật",
+                          }
+                        : device
+                )
+            );
+            fetchDeviceStatus();
+            showNotification(name, action, "success");
+        } else {
+            showNotification(name, action, "error");
+        }
     };
     return (
         <>
@@ -58,9 +86,9 @@ function DevicesControl() {
                             </div>
                             <div className="control-btn">
                                 <Switch
-                                    checked={device.status === "on"}
-                                    checkedChildren="On"
-                                    unCheckedChildren="Off"
+                                    checked={device.status === "Bật"}
+                                    checkedChildren="Bật"
+                                    unCheckedChildren="Tắt"
                                     size="default"
                                     className="btn"
                                     onChange={() => handleSwitch(device)}

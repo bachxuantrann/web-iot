@@ -35,6 +35,7 @@ function HistoryDevice() {
             console.log(error.message);
         }
     };
+    console.log(data);
 
     useEffect(() => {
         fetchData(pagination.current, pagination.pageSize, "");
@@ -61,22 +62,23 @@ function HistoryDevice() {
     // Chuyển đổi thời gian từ định dạng nhập vào sang ISO
     const handleSearch = () => {
         if (!searchTime) return;
-
         // Chuyển đổi định dạng từ "HH:mm:ss DD/MM/YYYY" sang ngày hợp lệ
-        const parsedDate = dayjs(searchTime, "HH:mm:ss DD/MM/YYYY", true);
-
-        if (!parsedDate.isValid()) {
+        if (typeof searchTime !== "string") {
             alert(
-                "Định dạng thời gian không hợp lệ! Vui lòng nhập đúng định dạng: HH:mm:ss DD/MM/YYYY"
+                "Vui lòng nhập thời gian đúng định dạng: YYYY/MM/DD HH:mm:ss"
             );
             return;
         }
-
-        // Chuyển sang UTC nhưng giữ nguyên giờ địa phương
-        const formattedTime = parsedDate.utcOffset(0, true).toISOString();
-        console.log("Thời gian gửi lên API:", formattedTime);
-
-        fetchData(1, pagination.pageSize, formattedTime);
+        // Chuyển đổi searchTime sang đối tượng dayjs với định dạng mong muốn
+        const parsedDate = dayjs(searchTime, "YYYY-MM-DD HH:mm:ss", true);
+        // Nếu định dạng không hợp lệ, cảnh báo lỗi
+        if (!parsedDate.isValid()) {
+            alert(
+                "Định dạng thời gian không hợp lệ! Vui lòng nhập theo định dạng: YYYY/MM/DD HH:mm:ss"
+            );
+            return;
+        }
+        fetchData(1, pagination.pageSize, searchTime);
     };
 
     const columns = [
@@ -108,7 +110,7 @@ function HistoryDevice() {
             <h1>Lịch sử thiết bị</h1>
             <div style={{ marginBottom: 16 }}>
                 <Input
-                    placeholder="Nhập thời gian (HH:mm:ss DD/MM/YYYY)"
+                    placeholder="Nhập thời gian (YYYY-MM-DD HH:mm:ss)"
                     value={searchTime}
                     onChange={handleInput}
                     style={{ width: 300, marginRight: 8 }}

@@ -14,8 +14,13 @@
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
+        "moment-timezone": "^0.5.47",
         "mongoose": "^8.10.1",
         "mongoose-slug-generator": "^1.0.4",
-        "nodemon": "^3.1.9"
+        "mysql2": "^3.13.0",
+        "nodemon": "^3.1.9",
+        "sequelize": "^6.37.6",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1"
     }
 }

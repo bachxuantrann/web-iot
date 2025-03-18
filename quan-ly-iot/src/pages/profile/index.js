@@ -1,4 +1,4 @@
-import { Card, Avatar, Typography, Input, Row, Col } from "antd";
+import { Card, Avatar, Typography, Row, Col } from "antd";
 import {
     UserOutlined,
     GithubOutlined,
@@ -17,17 +17,17 @@ const Profile = () => {
         student_id: "B21DCPT056",
         github: "https://github.com/bachxuantrann",
         bio: "Sinh viên năm 4 chuyên ngành Phát triển ứng dụng",
-        report: "https://link-to-report.com/report.pdf",
+        report: "https://smallpdf.com/vi/file#s=5f38fbd6-8556-43f7-bb25-bf10dd168cbb",
         apiDocs: "https://link-to-api-docs.com",
-        email: "bachxuantrann@gmail.com",
+        email: "bxt203@gmail.com",
     };
 
-    // Style tùy chỉnh cho Input bị disabled
-    const inputStyle = {
-        backgroundColor: "#f5f5f5", // Màu nền nhạt hơn
-        color: "#000", // Giữ màu chữ đậm
-        opacity: 1, // Loại bỏ hiệu ứng mờ của disabled
-        cursor: "not-allowed", // Hiển thị kiểu con trỏ không thể chỉnh sửa
+    const textStyle = {
+        display: "block",
+        padding: "10px",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "6px",
+        userSelect: "none",
     };
 
     return (
@@ -40,6 +40,7 @@ const Profile = () => {
                     width: "100%",
                 }}
             >
+                {/* Ảnh đại diện & thông tin cơ bản */}
                 <Row align="middle" gutter={32} style={{ marginBottom: 32 }}>
                     <Col xs={24} sm={6} style={{ textAlign: "center" }}>
                         <Avatar
@@ -59,86 +60,77 @@ const Profile = () => {
                     </Col>
                 </Row>
 
+                {/* Thông tin cá nhân */}
                 <Row gutter={[32, 32]}>
                     <Col xs={24} sm={12}>
                         <Text strong>Họ và Tên</Text>
-                        <Input
-                            size="large"
-                            value={user.name}
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={textStyle}>{user.name}</Text>
                     </Col>
                     <Col xs={24} sm={12}>
                         <Text strong>Ngày Sinh</Text>
-                        <Input
-                            size="large"
-                            value={user.dob}
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={textStyle}>{user.dob}</Text>
                     </Col>
                 </Row>
 
                 <Row gutter={[32, 32]} style={{ marginTop: 16 }}>
                     <Col xs={24} sm={12}>
                         <Text strong>Mã Sinh Viên</Text>
-                        <Input
-                            size="large"
-                            value={user.student_id}
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={textStyle}>{user.student_id}</Text>
                     </Col>
                     <Col xs={24} sm={12}>
                         <Text strong>GitHub</Text>
-                        <Input
-                            size="large"
-                            value={user.github}
-                            suffix={
-                                <GithubOutlined style={{ color: "#1890ff" }} />
-                            }
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={{ ...textStyle, cursor: "pointer" }}>
+                            <a
+                                href={user.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    color: "#1890ff",
+                                    textDecoration: "none",
+                                }}
+                            >
+                                <GithubOutlined /> {user.github}
+                            </a>
+                        </Text>
                     </Col>
                 </Row>
 
                 <Row style={{ marginTop: 16 }}>
                     <Col span={24}>
-                        <Text strong>Tiểu Sử</Text>
-                        <Input.TextArea
-                            size="large"
-                            value={user.bio}
-                            rows={4}
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text strong>Bio</Text>
+                        <Text style={textStyle}>{user.bio}</Text>
                     </Col>
                 </Row>
 
                 <Row gutter={[32, 32]} style={{ marginTop: 16 }}>
                     <Col xs={24} sm={12}>
                         <Text strong>Link Báo Cáo PDF</Text>
-                        <Input
-                            size="large"
-                            value={user.report}
-                            suffix={
-                                <FilePdfOutlined style={{ color: "red" }} />
-                            }
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={{ ...textStyle, cursor: "pointer" }}>
+                            <a
+                                href={user.report}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "red", textDecoration: "none" }}
+                            >
+                                <FilePdfOutlined /> Xem link báo cáo PDF online
+                            </a>
+                        </Text>
                     </Col>
                     <Col xs={24} sm={12}>
                         <Text strong>Link API Docs</Text>
-                        <Input
-                            size="large"
-                            value={user.apiDocs}
-                            suffix={<LinkOutlined style={{ color: "green" }} />}
-                            disabled
-                            style={inputStyle}
-                        />
+                        <Text style={{ ...textStyle, cursor: "pointer" }}>
+                            <a
+                                href={user.apiDocs}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    color: "green",
+                                    textDecoration: "none",
+                                }}
+                            >
+                                <LinkOutlined /> Xem tài liệu API
+                            </a>
+                        </Text>
                     </Col>
                 </Row>
             </Card>

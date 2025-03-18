@@ -1,75 +1,88 @@
 const SensorHistory = require("../models/SensorHistory.js");
+const { Op } = require("sequelize");
+const moment = require("moment");
+const { sequelize } = require("../config/database.js");
 module.exports.addSensorHistory = async (req, res) => {
     try {
-        if (
-            !req.body.temperature ||
-            !req.body.humidity ||
-            !req.body.light_intensity
-        ) {
-            return res.status(400).send({
-                message: "Send all data needed !",
-            });
+        const { temperature, humidity, light_intensity } = req.body;
+        if (!temperature || !humidity || !light_intensity) {
+            return res.status(400).json({ message: "Send all data needed!" });
         }
-        const newSensorHistory = {
-            temperature: req.body.temperature,
-            humidity: req.body.humidity,
-            light_intensity: req.body.light_intensity,
-        };
-        const result = await SensorHistory.create(newSensorHistory);
-        return res.status(200).json(result);
+        const newSensorHistory = await SensorHistory.create({
+            temperature,
+            humidity,
+            light_intensity,
+        });
+        const responseData = newSensorHistory.toJSON();
+        responseData.created_at = moment(responseData.created_at).format(
+            "YYYY-MM-DD HH:mm:ss"
+        );
+        return res.status(200).json(responseData);
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: error.message });
+        console.error("Error:", error.message);
+        return res
+            .status(500)
+            .json({ message: "Internal server error", error: error.message });
     }
 };
 module.exports.getAndFind = async (req, res) => {
     try {
-        let { page, limit } = req.query;
+        let { page, limit, sort, order } = req.query;
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 10;
-        const skip = (page - 1) * limit;
-        const allowField = ["temperature", "humidity", "light_intensity"];
+        const offset = (page - 1) * limit;
+        const allowField = [
+            "temperature",
+            "humidity",
+            "light_intensity",
+            "created_at",
+        ];
         let searchCondition = {};
         allowField.forEach((field) => {
             if (req.query[field] !== undefined) {
                 const value = parseFloat(req.query[field]);
                 if (isNaN(value)) {
                     return res.status(400).json({
-                        message: "Invalid value for searching",
+                        message: "Giá trị không hợp lệ",
                     });
                 }
-                searchCondition[field] = { $gte: value - 1, $lte: value + 1 };
+                searchCondition[field] = {
+                    [Op.gte]: value - 1,
+                    [Op.lte]: value + 1,
+                };
             }
         });
-        // Handle order
-        let sortField = req.query.sort;
-        let sortOrder = req.query.order === "asc" ? 1 : -1;
-        if (sortField && !allowField.includes(sortField)) {
-            return res.status(400).json({
-                message: "Invalid sort field",
+        // Xử lý sắp xếp
+        let sortField = sort && allowField.includes(sort) ? sort : "created_at";
+        let sortOrder = order === "asc" ? "ASC" : "DESC";
+        // Tìm kiếm và đếm tổng số bản ghi
+        const { rows: sensorHistoryWithTimezone, count: total } =
+            await SensorHistory.findAndCountAll({
+                where: searchCondition,
+                order: [[sortField, sortOrder]],
+                limit,
+                offset,
             });
-        }
-        if (!sortField) {
-            sortField = "createdAt";
-            sortOrder = -1;
-        }
-        const sensorHistory = await SensorHistory.find(searchCondition)
-            .sort({ [sortField]: sortOrder })
-            .skip(skip)
-            .limit(limit);
-        const total = await SensorHistory.countDocuments(searchCondition);
         const totalPages = Math.ceil(total / limit);
         const pagination = {
             total,
             totalPages,
             currentPage: page,
         };
+        const sensorHistory = sensorHistoryWithTimezone.map((record) => ({
+            ...record.get(),
+            created_at: moment(record.created_at)
+                .tz("Asia/Ho_Chi_Minh")
+                .format("YYYY-MM-DD HH:mm:ss"),
+        }));
         res.status(200).json({
             pagination,
             sensorHistory,
         });
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: error.message });
+        console.error("Error:", error.message);
+        return res
+            .status(500)
+            .json({ message: "Lỗi sever", error: error.message });
     }
 };

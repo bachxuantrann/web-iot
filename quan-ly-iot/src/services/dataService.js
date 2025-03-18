@@ -44,10 +44,7 @@ export const getHistoryData = async (
             temperature: `${record.temperature}°C`,
             humidity: `${record.humidity}%`,
             light: `${record.light_intensity} lx`,
-            time: new Date(record.createdAt).toLocaleString(
-                "vi-VN",
-                formatDateData
-            ),
+            time: record.created_at,
         }));
 
         return { formattedData, pagination };
