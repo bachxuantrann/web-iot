@@ -18,7 +18,7 @@ const Profile = () => {
         github: "https://github.com/bachxuantrann",
         bio: "Sinh viên năm 4 chuyên ngành Phát triển ứng dụng",
         report: "https://smallpdf.com/vi/file#s=5f38fbd6-8556-43f7-bb25-bf10dd168cbb",
-        apiDocs: "https://link-to-api-docs.com",
+        apiDocs: "http://localhost:5555/api-docs/",
         email: "bxt203@gmail.com",
     };
 

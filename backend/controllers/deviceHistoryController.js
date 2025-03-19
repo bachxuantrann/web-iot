@@ -11,6 +11,8 @@ module.exports.addDeviceHistory = async (req, res) => {
             status: status,
         };
         // Thêm vào database MySQL
+        // INSERT INTO DeviceHistory (device_id, device_name, status, created_at)
+        // VALUES ('device_id', 'device_name', 'status', NOW());
         const result = await DeviceHistory.create(newHistoryDevice);
         const responseData = result.toJSON();
         responseData.created_at = moment(responseData.created_at).format(
@@ -58,6 +60,17 @@ module.exports.getAndFind = async (req, res) => {
                 [Op.lte]: endOfMinute,
             };
         }
+        // Lấy ra các bản ghi thoả mãn
+        // SELECT *
+        // FROM DeviceHistory
+        // WHERE created_at >= '2024-03-17 10:30:00'  -- Giây = 00, Millisecond = 000
+        // AND created_at <= '2024-03-17 10:30:59'  -- Giây = 59, Millisecond = 999
+        // ORDER BY created_at DESC
+        // LIMIT 10 OFFSET 0;  -- Nếu page=1, limit=10
+        // Đếm tổng bản ghi thoả mãn
+        // SELECT COUNT(*) AS total
+        // FROM DeviceHistory
+        // WHERE created_at BETWEEN '2025-03-18 10:00:00' AND '2025-03-18 10:00:59';
 
         const { rows: devicesHistoryWithTimezone, count: total } =
             await DeviceHistory.findAndCountAll({
@@ -89,6 +102,12 @@ module.exports.getAndFind = async (req, res) => {
 module.exports.getLatestDeviceStatus = async (req, res) => {
     try {
         const devices = ["led1", "led2", "led3"];
+        // SELECT device_id, device_name, status, created_at
+        // FROM DeviceHistory
+        // WHERE device_id = 'led1'
+        // ORDER BY created_at DESC
+        // LIMIT 1;
+
         const latestStatuses = await Promise.all(
             devices.map(async (deviceId) => {
                 const latestRecord = await DeviceHistory.findOne({

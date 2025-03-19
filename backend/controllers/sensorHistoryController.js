@@ -8,6 +8,8 @@ module.exports.addSensorHistory = async (req, res) => {
         if (!temperature || !humidity || !light_intensity) {
             return res.status(400).json({ message: "Send all data needed!" });
         }
+        // INSERT INTO SensorHistory (temperature, humidity, light_intensity, created_at)
+        // VALUES (26.5, 60.2, 800, NOW());
         const newSensorHistory = await SensorHistory.create({
             temperature,
             humidity,
@@ -47,14 +49,19 @@ module.exports.getAndFind = async (req, res) => {
                     });
                 }
                 searchCondition[field] = {
-                    [Op.gte]: value - 1,
-                    [Op.lte]: value + 1,
+                    [Op.gte]: value,
+                    [Op.lte]: value,
                 };
             }
         });
         // Xử lý sắp xếp
         let sortField = sort && allowField.includes(sort) ? sort : "created_at";
         let sortOrder = order === "asc" ? "ASC" : "DESC";
+
+        // SELECT * FROM SensorHistory
+        // WHERE temperature = 26.9
+        // ORDER BY created_at DESC
+        // LIMIT 10 OFFSET 0;
         // Tìm kiếm và đếm tổng số bản ghi
         const { rows: sensorHistoryWithTimezone, count: total } =
             await SensorHistory.findAndCountAll({
