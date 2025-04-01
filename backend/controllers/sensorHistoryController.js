@@ -40,19 +40,6 @@ module.exports.getAndFind = async (req, res) => {
             "created_at",
         ];
         let searchCondition = {};
-        // allowField.forEach((field) => {
-        //     if (searchField === field && searchField) {
-        //         const value = parseFloat(searchValue);
-        //         if (isNaN(value)) {
-        //             return res.status(400).json({
-        //                 message: "Giá trị không hợp lệ",
-        //             });
-        //         }
-        //         searchCondition[field] = {
-        //             [Op.between]: [value - 0.001, value + 0.001],
-        //         };
-        //     }
-        // });
         if (searchField && allowField.includes(searchField) && searchValue) {
             if (searchField === "created_at") {
                 let datetime = decodeURIComponent(searchValue);

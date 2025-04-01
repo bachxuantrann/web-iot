@@ -1,5 +1,5 @@
 const DeviceHistory = require("../models/DeviceHistory.js");
-const { Op } = require("sequelize");
+const { Op, fn, col, where } = require("sequelize");
 const moment = require("moment");
 module.exports.addDeviceHistory = async (req, res) => {
     try {
@@ -39,25 +39,18 @@ module.exports.getAndFind = async (req, res) => {
         const offset = (page - 1) * limit;
         let searchCondition = {};
         if (datetime) {
+            // Giải mã và kiểm tra định dạng ISO 8601
             datetime = decodeURIComponent(datetime);
-            console.log(datetime);
-            const originaDatetime = moment(datetime).format(
-                "YYYY-MM-DD HH:mm:ss"
-            );
-            const targetDate = new Date(originaDatetime);
-            if (isNaN(targetDate.getTime())) {
+            if (!moment(datetime, moment.ISO_8601, true).isValid()) {
                 return res.status(400).json({
                     message: "Thời gian tìm kiếm không hợp lệ",
                 });
             }
-            const startOfMinute = new Date(targetDate);
-            startOfMinute.setSeconds(0, 0);
-            const endOfMinute = new Date(targetDate);
-            endOfMinute.setSeconds(59, 999);
-
+            // Chuyển giá trị datetime sang chuỗi định dạng "YYYY-MM-DD HH:mm:ss"
+            const startOfSecond = moment(datetime).startOf("second").toDate();
+            const endOfSecond = moment(datetime).endOf("second").toDate();
             searchCondition.created_at = {
-                [Op.gte]: startOfMinute,
-                [Op.lte]: endOfMinute,
+                [Op.between]: [startOfSecond, endOfSecond],
             };
         }
         // Lấy ra các bản ghi thoả mãn

@@ -6,62 +6,58 @@ const controller = require("../controllers/sensorHistoryController.js");
  * @swagger
  * /sensor:
  *   get:
- *     summary: Lấy danh sách lịch sử cảm biến và tìm kiếm dữ liệu
- *     tags: [Get and Find and Sort and Pagination Sensor History]
- *     description: |
- *       Lấy dữ liệu lịch sử cảm biến (nhiệt độ, độ ẩm, cường độ ánh sáng) với các tùy chọn:
- *       - Phân trang: `page` (số trang) và `limit` (số bản ghi trên mỗi trang).
- *       - Sắp xếp: `sort` (trường sắp xếp, mặc định là `created_at`) và `order` (thứ tự sắp xếp, `asc` hoặc `desc`).
- *       - Tìm kiếm: sử dụng cặp `searchField` và `searchValue` để lọc dữ liệu theo trường (ví dụ: tìm kiếm theo `humidity` với giá trị xung quanh ±0.001).
+ *     summary: Lấy danh sách lịch sử cảm biến với tìm kiếm và phân trang
+ *     tags: [Get and Find Sensor History]
+ *     description: >
+ *       API này trả về danh sách lịch sử cảm biến với các trường thông tin như nhiệt độ, độ ẩm, cường độ ánh sáng, và thời gian ghi nhận.
+ *       Nếu cung cấp các tham số tìm kiếm, API sẽ áp dụng bộ lọc:
+ *       - Nếu searchField là "created_at", searchValue phải có định dạng ISO 8601 (ví dụ: "2025-03-17T12:00:29").
+ *         API sẽ so sánh chính xác các bản ghi có created_at nằm trong khoảng từ đầu giây đến cuối giây của giá trị được cung cấp.
+ *       - Với các trường số khác (temperature, humidity, light_intensity), API so sánh giá trị trong khoảng ±0.001.
  *
- *       **Ví dụ yêu cầu đầy đủ:**
- *       ```
- *       http://localhost:5555/api/sensor?searchField=humidity&searchValue=60.2&sort=light_intensity&order=asc&page=2&limit=1
- *       ```
  *     parameters:
  *       - in: query
- *         name: page
+ *         name: searchField
  *         schema:
- *           type: integer
- *           example: 2
- *         description: Số trang cần lấy (bắt đầu từ 1)
+ *           type: string
+ *           enum: [ "temperature", "humidity", "light_intensity", "created_at" ]
+ *           example: "created_at"
+ *         description: Tên trường cần tìm kiếm.
  *       - in: query
- *         name: limit
+ *         name: searchValue
  *         schema:
- *           type: integer
- *           example: 1
- *         description: Số bản ghi trên mỗi trang
+ *           type: string
+ *           example: "2025-03-17T12:00:29"
+ *         description: "Giá trị tìm kiếm cho trường được chỉ định. (Với created_at: định dạng ISO 8601)"
  *       - in: query
  *         name: sort
  *         schema:
  *           type: string
  *           enum: [ "temperature", "humidity", "light_intensity", "created_at" ]
- *           example: "light_intensity"
- *         description: Trường để sắp xếp (mặc định là `created_at`)
+ *           example: "humidity"
+ *         description: Trường sắp xếp. Nếu không có, mặc định là "created_at".
  *       - in: query
  *         name: order
  *         schema:
  *           type: string
  *           enum: [ "asc", "desc" ]
  *           example: "asc"
- *         description: Thứ tự sắp xếp (tăng dần hoặc giảm dần)
+ *         description: Thứ tự sắp xếp ("asc" cho tăng dần, "desc" cho giảm dần). Mặc định là "desc" nếu không có.
  *       - in: query
- *         name: searchField
+ *         name: page
  *         schema:
- *           type: string
- *           enum: [ "temperature", "humidity", "light_intensity" ]
- *           example: "humidity"
- *         description: Tên trường cần tìm kiếm
+ *           type: integer
+ *           example: 1
+ *         description: Số trang cần lấy (bắt đầu từ 1).
  *       - in: query
- *         name: searchValue
+ *         name: limit
  *         schema:
- *           type: number
- *           format: float
- *           example: 60.2
- *         description: Giá trị tìm kiếm cho trường `searchField`
+ *           type: integer
+ *           example: 10
+ *         description: Số bản ghi trên mỗi trang.
  *     responses:
  *       200:
- *         description: Danh sách lịch sử cảm biến với phân trang và dữ liệu tìm kiếm
+ *         description: Trả về danh sách lịch sử cảm biến với thông tin phân trang.
  *         content:
  *           application/json:
  *             schema:
@@ -73,23 +69,20 @@ const controller = require("../controllers/sensorHistoryController.js");
  *                     total:
  *                       type: integer
  *                       example: 100
- *                       description: Tổng số bản ghi
  *                     totalPages:
  *                       type: integer
  *                       example: 10
- *                       description: Tổng số trang
  *                     currentPage:
  *                       type: integer
- *                       example: 2
- *                       description: Trang hiện tại
+ *                       example: 1
  *                 sensorHistory:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/SensorHistory'
  *       400:
- *         description: "Lỗi dữ liệu đầu vào không hợp lệ (ví dụ: giá trị tìm kiếm không hợp lệ)"
+ *         description: Tham số tìm kiếm không hợp lệ.
  *       500:
- *         description: Lỗi server
+ *         description: Lỗi server.
  */
 
 router.get("/", controller.getAndFind);
