@@ -6,59 +6,62 @@ const controller = require("../controllers/sensorHistoryController.js");
  * @swagger
  * /sensor:
  *   get:
- *     summary: Lấy danh sách lịch sử cảm biến có điều kiện
- *     tags: [Get and Find Sensor History]
+ *     summary: Lấy danh sách lịch sử cảm biến và tìm kiếm dữ liệu
+ *     tags: [Get and Find and Sort and Pagination Sensor History]
  *     description: |
- *       API hỗ trợ tìm kiếm lịch sử cảm biến theo **một trong ba** trường `temperature`, `humidity` hoặc `light_intensity` chỉ trọn 1 trường 1 lần tìm kiếm.
- *       Hỗ trợ sắp xếp, phân trang.
+ *       Lấy dữ liệu lịch sử cảm biến (nhiệt độ, độ ẩm, cường độ ánh sáng) với các tùy chọn:
+ *       - Phân trang: `page` (số trang) và `limit` (số bản ghi trên mỗi trang).
+ *       - Sắp xếp: `sort` (trường sắp xếp, mặc định là `created_at`) và `order` (thứ tự sắp xếp, `asc` hoặc `desc`).
+ *       - Tìm kiếm: sử dụng cặp `searchField` và `searchValue` để lọc dữ liệu theo trường (ví dụ: tìm kiếm theo `humidity` với giá trị xung quanh ±0.001).
+ *
+ *       **Ví dụ yêu cầu đầy đủ:**
+ *       ```
+ *       http://localhost:5555/api/sensor?searchField=humidity&searchValue=60.2&sort=light_intensity&order=asc&page=2&limit=1
+ *       ```
  *     parameters:
- *       - in: query
- *         name: temperature
- *         schema:
- *           type: number
- *           example: 26.9
- *         description: "Tìm kiếm theo nhiệt độ (°C) - Giá trị nằm trong khoảng ±1°C"
- *       - in: query
- *         name: humidity
- *         schema:
- *           type: number
- *           example: 60.2
- *         description: "Tìm kiếm theo độ ẩm (%) - Giá trị nằm trong khoảng ±1%"
- *       - in: query
- *         name: light_intensity
- *         schema:
- *           type: integer
- *           example: 800
- *         description: "Tìm kiếm theo cường độ ánh sáng (Lux) - Giá trị nằm trong khoảng ±1 Lux"
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           enum: [temperature, humidity, light_intensity, created_at]
- *           example: created_at
- *         description: "Trường cần sắp xếp (Mặc định: `created_at`)"
- *       - in: query
- *         name: order
- *         schema:
- *           type: string
- *           enum: [asc, desc]
- *           example: desc
- *         description: "Sắp xếp theo thứ tự tăng (`asc`) hoặc giảm (`desc`) (Mặc định: `desc`)"
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *           example: 1
- *         description: "Trang hiện tại (Mặc định: 1)"
+ *           example: 2
+ *         description: Số trang cần lấy (bắt đầu từ 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *           example: 5
- *         description: "Số lượng bản ghi mỗi trang (Mặc định: 10)"
+ *           example: 1
+ *         description: Số bản ghi trên mỗi trang
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [ "temperature", "humidity", "light_intensity", "created_at" ]
+ *           example: "light_intensity"
+ *         description: Trường để sắp xếp (mặc định là `created_at`)
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [ "asc", "desc" ]
+ *           example: "asc"
+ *         description: Thứ tự sắp xếp (tăng dần hoặc giảm dần)
+ *       - in: query
+ *         name: searchField
+ *         schema:
+ *           type: string
+ *           enum: [ "temperature", "humidity", "light_intensity" ]
+ *           example: "humidity"
+ *         description: Tên trường cần tìm kiếm
+ *       - in: query
+ *         name: searchValue
+ *         schema:
+ *           type: number
+ *           format: float
+ *           example: 60.2
+ *         description: Giá trị tìm kiếm cho trường `searchField`
  *     responses:
  *       200:
- *         description: Trả về danh sách lịch sử cảm biến kèm theo phân trang
+ *         description: Danh sách lịch sử cảm biến với phân trang và dữ liệu tìm kiếm
  *         content:
  *           application/json:
  *             schema:
@@ -69,19 +72,22 @@ const controller = require("../controllers/sensorHistoryController.js");
  *                   properties:
  *                     total:
  *                       type: integer
- *                       example: 20
+ *                       example: 100
+ *                       description: Tổng số bản ghi
  *                     totalPages:
  *                       type: integer
- *                       example: 4
+ *                       example: 10
+ *                       description: Tổng số trang
  *                     currentPage:
  *                       type: integer
- *                       example: 1
+ *                       example: 2
+ *                       description: Trang hiện tại
  *                 sensorHistory:
  *                   type: array
  *                   items:
- *                     $ref: "#/components/schemas/SensorHistory"
+ *                     $ref: '#/components/schemas/SensorHistory'
  *       400:
- *         description: Lỗi do giá trị không hợp lệ hoặc thiếu tham số bắt buộc
+ *         description: "Lỗi dữ liệu đầu vào không hợp lệ (ví dụ: giá trị tìm kiếm không hợp lệ)"
  *       500:
  *         description: Lỗi server
  */

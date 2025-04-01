@@ -29,7 +29,7 @@ module.exports.addSensorHistory = async (req, res) => {
 };
 module.exports.getAndFind = async (req, res) => {
     try {
-        let { page, limit, sort, order } = req.query;
+        let { page, limit, sort, order, searchField, searchValue } = req.query;
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 10;
         const offset = (page - 1) * limit;
@@ -40,28 +40,55 @@ module.exports.getAndFind = async (req, res) => {
             "created_at",
         ];
         let searchCondition = {};
-        allowField.forEach((field) => {
-            if (req.query[field] !== undefined) {
-                const value = parseFloat(req.query[field]);
-                if (isNaN(value)) {
+        // allowField.forEach((field) => {
+        //     if (searchField === field && searchField) {
+        //         const value = parseFloat(searchValue);
+        //         if (isNaN(value)) {
+        //             return res.status(400).json({
+        //                 message: "Giá trị không hợp lệ",
+        //             });
+        //         }
+        //         searchCondition[field] = {
+        //             [Op.between]: [value - 0.001, value + 0.001],
+        //         };
+        //     }
+        // });
+        if (searchField && allowField.includes(searchField) && searchValue) {
+            if (searchField === "created_at") {
+                let datetime = decodeURIComponent(searchValue);
+                if (!moment(datetime, moment.ISO_8601, true).isValid()) {
                     return res.status(400).json({
-                        message: "Giá trị không hợp lệ",
+                        message: "Invalid date time format",
                     });
                 }
-                searchCondition[field] = {
-                    [Op.gte]: value,
-                    [Op.lte]: value,
+                const startOfSecond = moment(datetime)
+                    .startOf("second")
+                    .toDate();
+                const endOfSecond = moment(datetime).endOf("second").toDate();
+                searchCondition.created_at = {
+                    [Op.between]: [startOfSecond, endOfSecond],
+                };
+            } else {
+                const value = parseFloat(searchValue);
+                if (isNaN(value)) {
+                    return res.status(400).json({
+                        message: "Invalid data format !",
+                    });
+                }
+                searchCondition[searchField] = {
+                    [Op.between]: [value - 0.001, value + 0.001],
                 };
             }
-        });
+        }
         // Xử lý sắp xếp
         let sortField = sort && allowField.includes(sort) ? sort : "created_at";
         let sortOrder = order === "asc" ? "ASC" : "DESC";
 
-        // SELECT * FROM SensorHistory
-        // WHERE temperature = 26.9
+        // SELECT *
+        // FROM sensorhistories
+        // WHERE temperature BETWEEN 26.899 AND 26.901
         // ORDER BY created_at DESC
-        // LIMIT 10 OFFSET 0;
+        // LIMIT 5 OFFSET 0;
         // Tìm kiếm và đếm tổng số bản ghi
         const { rows: sensorHistoryWithTimezone, count: total } =
             await SensorHistory.findAndCountAll({
@@ -70,6 +97,7 @@ module.exports.getAndFind = async (req, res) => {
                 limit,
                 offset,
             });
+
         const totalPages = Math.ceil(total / limit);
         const pagination = {
             total,
