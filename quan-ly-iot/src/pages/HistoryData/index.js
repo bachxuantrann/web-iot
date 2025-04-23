@@ -132,12 +132,13 @@ function HistoryData() {
                     <Option value="light_intensity">
                         Cường độ ánh sáng (lx)
                     </Option>
+                    <Option value="created_at">Thời gian</Option>
                 </Select>
                 <Input
                     placeholder="Nhập giá trị"
                     value={searchValue}
                     onChange={handleInput}
-                    style={{ width: 120 }}
+                    style={{ width: 200 }}
                     disabled={!searchField}
                 />
                 <Button

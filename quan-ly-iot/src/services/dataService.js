@@ -23,8 +23,14 @@ export const getHistoryData = async (
     }
 
     Object.keys(search).forEach((key) => {
-        if (search[key]) {
-            params.append(key, search[key]);
+        if (search[key] && key !== "created_at") {
+            params.append("searchField", key);
+            params.append("searchValue", search[key]);
+        } else if (search[key] && key === "created_at") {
+            // format time to send back-end
+            let formatDatetime = search[key].replace(" ", "T");
+            params.append("searchField", key);
+            params.append("searchValue", formatDatetime);
         }
     });
 

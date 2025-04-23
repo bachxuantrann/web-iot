@@ -9,7 +9,7 @@ export const getDeviceHistory = async (page, limit, datetime = "") => {
         params.append("datetime", formatDatetime);
     }
     const url = `api/devices-history?${params.toString()}`;
-    console.log("Fetching URL:", url);
+    console.log("Fetching URL device history:", url);
 
     try {
         const response = await get(url);
