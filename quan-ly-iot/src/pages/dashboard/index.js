@@ -9,6 +9,8 @@ import tempIcon from "../../icons/temp.png";
 import humidityIcon from "../../icons/humidity.png";
 import DevicesControl from "../../components/DevicesControl";
 import { getDevice } from "../../services/deviceService";
+import { io } from "socket.io-client"
+import { formatDateData } from "../../utils/formatData";
 
 function Dashboard() {
     const [dataLatest, setDataLatest] = useState({});
@@ -29,10 +31,42 @@ function Dashboard() {
             }
         };
         fetchData();
+    
+        // ✅ Connect socket.io
+        const socket = io("http://localhost:5555"); 
+    
+        socket.on("sensorData", (data) => {
+            console.log("Realtime data:", data);
+    
+            // ✅ Format lại giống getLatestData
+            const formattedRecord = {
+                id: data.id || data._id,
+                temperature: `${data.temperature}°C`,
+                humidity: `${data.humidity}%`,
+                light: `${data.light_intensity} lx`,
+                time: new Date(data.createdAt).toLocaleString(
+                    "vi-VN",
+                    formatDateData
+                ),
+            };
+            setDataLatest(formattedRecord);
+    
+            // ✅ Optionally: update chart luôn nếu muốn realtime chart
+            setDataChart((prev) => ({
+                ...prev,
+                sensorHistory: [...(prev.sensorHistory || []), data]
+            }));
+            
+            
+            
+        });
+    
+        // Clean up socket khi unmount
+        return () => {
+            socket.disconnect();
+        };
     }, []);
-    console.log("dataLatest", dataLatest);
-    console.log("datachart", dataChart.sensorHistory);
-    console.log("data devices", devices);
+    console.log(dataChart);
     // Các thông số hiện tại dùng cho các CardItem
     const temp = {
         title: "Nhiệt độ",

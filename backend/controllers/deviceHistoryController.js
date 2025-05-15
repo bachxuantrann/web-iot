@@ -1,32 +1,48 @@
 const DeviceHistory = require("../models/DeviceHistory.js");
 const { Op, fn, col, where } = require("sequelize");
 const moment = require("moment");
-module.exports.addDeviceHistory = async (req, res) => {
+
+const createRecord = async ({ device_id, device_name, status }) => {
+    const rec = await DeviceHistory.create({ device_id, device_name, status: status ? "Bật" : "Tắt" });
+    const out = rec.toJSON();
+    out.created_at = moment(out.created_at).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
+    return out;
+};
+module.exports.addDeviceHistory = async (req, res,mqttClient) => {
     try {
         const { id } = req.params;
         const { status, device_name } = req.body;
-        const newHistoryDevice = {
-            device_id: id,
-            device_name: device_name,
-            status: status,
-        };
-        // Thêm vào database MySQL
-        // INSERT INTO DeviceHistory (device_id, device_name, status, created_at)
-        // VALUES ('device_id', 'device_name', 'status', NOW());
-        const result = await DeviceHistory.create(newHistoryDevice);
-        const responseData = result.toJSON();
-        responseData.created_at = moment(responseData.created_at).format(
-            "YYYY-MM-DD HH:mm:ss"
-        );
-        return res.status(201).json({
-            message: "Thêm lịch sử thiết bị thành công!",
-            data: responseData,
+        if (!['led1', 'led2', 'led3'].includes(id)) {
+            return res.status(400).json({ message: "Invalid device id" });
+        }
+        if (typeof status !== 'boolean') {
+            return res.status(400).json({ message: "Status must be a boolean (true/false)" });
+        }
+        const topic = "device/all";
+        const payload = {};
+        payload[id]=status;
+        mqttClient.publish(topic, JSON.stringify(payload), { qos: 1 }, async (err) => {
+            if (err) {
+                console.error("MQTT publish error:", err);
+                return res.status(500).json({ message: "Failed to send MQTT message", error: err.message });
+            }
+
+            // (Optional) Ghi lại lịch sử điều khiển nếu cần:
+            await createRecord({
+                device_id: id,
+                device_name,
+                status
+            });
+            return res.status(200).json({
+                message: "MQTT message sent successfully",
+                data: { id, status }
+            });
         });
+        
+        
     } catch (error) {
         console.error("Lỗi khi thêm lịch sử thiết bị:", error.message);
-        return res
-            .status(500)
-            .json({ message: "Lỗi server!", error: error.message });
+        return res.status(500).json({ message: "Lỗi server!", error: error.message });
     }
 };
 

@@ -35,7 +35,7 @@ export const getDeviceHistory = async (page, limit, datetime = "") => {
 };
 export const postDeviceHistory = async (id, name, status) => {
     const url = `api/devices-history/${id}`;
-    let updateStatus = status === "Bật" ? "Tắt" : "Bật";
+    let updateStatus = status === "Bật" ? false : true;
     const data = {
         status: updateStatus,
         device_name: name,

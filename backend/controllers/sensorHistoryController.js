@@ -2,24 +2,21 @@ const SensorHistory = require("../models/SensorHistory.js");
 const { Op } = require("sequelize");
 const moment = require("moment");
 const { sequelize } = require("../config/database.js");
+module.exports.createRecord = async ({ temperature, humidity, light_intensity }) => {
+    const rec = await SensorHistory.create({ temperature, humidity, light_intensity });
+    const out = rec.toJSON();
+    out.created_at = moment(out.created_at)
+      .tz("Asia/Ho_Chi_Minh")
+      .format("YYYY-MM-DD HH:mm:ss");
+    return out;
+};
+
 module.exports.addSensorHistory = async (req, res) => {
     try {
-        const { temperature, humidity, light_intensity } = req.body;
-        if (!temperature || !humidity || !light_intensity) {
-            return res.status(400).json({ message: "Send all data needed!" });
-        }
-        // INSERT INTO SensorHistory (temperature, humidity, light_intensity, created_at)
-        // VALUES (26.5, 60.2, 800, NOW());
-        const newSensorHistory = await SensorHistory.create({
-            temperature,
-            humidity,
-            light_intensity,
-        });
-        const responseData = newSensorHistory.toJSON();
-        responseData.created_at = moment(responseData.created_at).format(
-            "YYYY-MM-DD HH:mm:ss"
-        );
-        return res.status(200).json(responseData);
+        const rec = await createRecord(req.body);
+        const out = rec.toJSON();
+        out.created_at = moment(out.created_at).format("YYYY-MM-DD HH:mm:ss");
+        res.status(200).json(out);
     } catch (error) {
         console.error("Error:", error.message);
         return res
