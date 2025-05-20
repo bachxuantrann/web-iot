@@ -22,7 +22,7 @@ app.use(
 );
 // config mqtt
 app.use(express.json());
-const mqttClient = mqtt.connect("mqtt://172.20.10.6:2020", {
+const mqttClient = mqtt.connect("mqtt://192.168.1.21:2020", {
     username: "bach",
     password: "123",
 });

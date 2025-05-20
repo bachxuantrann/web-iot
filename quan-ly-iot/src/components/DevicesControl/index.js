@@ -1,5 +1,4 @@
 import { Switch, Row, Col, notification } from "antd";
-
 import { useEffect, useState } from "react";
 import "./DevicesControl.scss";
 import {
@@ -18,6 +17,7 @@ function DevicesControl() {
             duration: 2,
         });
     };
+
     const [devices, setDevices] = useState([
         {
             id: "led1",
@@ -35,6 +35,7 @@ function DevicesControl() {
             status: "Tắt",
         },
     ]);
+
     const fetchDeviceStatus = async () => {
         try {
             const response = await getLatestDeviceStatus();
@@ -51,22 +52,25 @@ function DevicesControl() {
             console.log("Lỗi lấy trạng thái thiết bị", error);
         }
     };
+
     useEffect(() => {
         fetchDeviceStatus();
     }, []);
+
     const handleSwitch = async (device) => {
         const { id, name, status } = device;
-        let action = status === "Bật" ? "tắt" : "bật";
-        let reponse = await postDeviceHistory(id, name, status);
-        if (reponse) {
+        const action = status === "Bật" ? "tắt" : "bật";
+
+        const response = await postDeviceHistory(id, name, status);
+        if (response) {
             setDevices((prevDevices) =>
-                prevDevices.map((device) =>
-                    device.id === id
+                prevDevices.map((d) =>
+                    d.id === id
                         ? {
-                              ...device,
-                              status: device.status === "Bật" ? "Tắt" : "Bật",
+                              ...d,
+                              status: d.status === "Bật" ? "Tắt" : "Bật",
                           }
-                        : device
+                        : d
                 )
             );
             fetchDeviceStatus();
@@ -75,30 +79,29 @@ function DevicesControl() {
             showNotification(name, action, "error");
         }
     };
+
     return (
-        <>
-            <Row gutter={[16, 16]} className="control-buttons">
-                {devices.map((device) => (
-                    <Col key={device.id} span={8}>
-                        <div className="control-card">
-                            <div className="control-info">
-                                <p>{device.name}</p>
-                            </div>
-                            <div className="control-btn">
-                                <Switch
-                                    checked={device.status === "Bật"}
-                                    checkedChildren="Bật"
-                                    unCheckedChildren="Tắt"
-                                    size="default"
-                                    className="btn"
-                                    onChange={() => handleSwitch(device)}
-                                />
-                            </div>
+        <Row gutter={[16, 16]} className="control-buttons">
+            {devices.map((device) => (
+                <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24} key={device.id}>
+                    <div className="control-card">
+                        <div className="control-info">
+                            <p>{device.name}</p>
                         </div>
-                    </Col>
-                ))}
-            </Row>
-        </>
+                        <div className="control-btn">
+                            <Switch
+                                checked={device.status === "Bật"}
+                                checkedChildren="Bật"
+                                unCheckedChildren="Tắt"
+                                size="default"
+                                className="btn"
+                                onChange={() => handleSwitch(device)}
+                            />
+                        </div>
+                    </div>
+                </Col>
+            ))}
+        </Row>
     );
 }
 

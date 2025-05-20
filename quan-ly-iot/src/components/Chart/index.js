@@ -28,32 +28,41 @@ ChartJS.register(
     // Đăng ký plugin zoom,
 );
 
-function DashBoardChart({ data }) {
+function DashBoardChart({ data, type }) {
     const safeData = Array.isArray(data) ? data : [];
+
+    // Mapping từ type -> config biểu đồ
+    const typeConfig = {
+        temperature: {
+            label: "Nhiệt độ (°C)",
+            color: "#EF4444",
+            background: "rgba(239, 68, 68, 0.2)",
+            field: "temperature",
+        },
+        humidity: {
+            label: "Độ ẩm (%)",
+            color: "#3B82F6",
+            background: "rgba(59, 130, 246, 0.2)",
+            field: "humidity",
+        },
+        light_intensity: {
+            label: "Cường độ ánh sáng (Lux)",
+            color: "#FACC15",
+            background: "rgba(250, 204, 21, 0.2)",
+            field: "light_intensity",
+        },
+    };
+
+    const selected = typeConfig[type] || typeConfig.temperature;
+
     const chartData = {
         labels: safeData.map((item) => new Date(item.created_at)),
         datasets: [
             {
-                label: "Độ ẩm (%)",
-                data: safeData.map((item) => item.humidity),
-                borderColor: "#3B82F6",
-                backgroundColor: "rgba(59, 130, 246, 0.2)",
-                tension: 0.4,
-                fill: true,
-            },
-            {
-                label: "Nhiệt độ (°C)",
-                data: safeData.map((item) => item.temperature),
-                borderColor: "#EF4444",
-                backgroundColor: "rgba(239, 68, 68, 0.2)",
-                tension: 0.4,
-                fill: true,
-            },
-            {
-                label: "Cường độ ánh sáng (Lux)",
-                data: safeData.map((item) => item.light_intensity),
-                borderColor: "#FACC15",
-                backgroundColor: "rgba(250, 204, 21, 0.2)",
+                label: selected.label,
+                data: safeData.map((item) => item[selected.field]),
+                borderColor: selected.color,
+                backgroundColor: selected.background,
                 tension: 0.4,
                 fill: true,
             },
@@ -78,20 +87,16 @@ function DashBoardChart({ data }) {
             },
             zoom: {
                 zoom: {
-                    wheel: {
-                        enabled: true, // Cho phép zoom bằng chuột
-                    },
-                    pinch: {
-                        enabled: true, // Cho phép zoom bằng cử chỉ pinch (trên mobile)
-                    },
-                    mode: "x", // Chỉ cho phép zoom theo trục X
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: "x",
                 },
                 pan: {
-                    enabled: true, // Cho phép cuộn (pan)
-                    mode: "x", // Chỉ cho phép cuộn theo trục X
+                    enabled: true,
+                    mode: "x",
                 },
                 limits: {
-                    x: { min: "original", max: "original" }, // Giới hạn zoom/pan trong phạm vi dữ liệu gốc
+                    x: { min: "original", max: "original" },
                 },
             },
         },
@@ -100,25 +105,21 @@ function DashBoardChart({ data }) {
                 type: "time",
                 time: {
                     displayFormats: {
-                        minute: "HH:mm", // Chỉ hiển thị giờ và phút
+                        minute: "HH:mm",
                         hour: "dd/MM HH:mm",
                         day: "dd/MM/yy",
                         week: "dd/MM/yy",
                         month: "MM/yyyy",
                     },
-                    tooltipFormat: "dd/MM/yyyy HH:mm", // Định dạng khi hover vào điểm dữ liệu
+                    tooltipFormat: "dd/MM/yyyy HH:mm",
                 },
                 ticks: {
-                    source: "auto", // Tự động lấy dữ liệu từ nguồn
-                    autoSkip: true, // Bật tự động bỏ bớt nhãn để không bị sát nhau
-                    maxTicksLimit: 10, // Chỉ hiển thị tối đa 10 nhãn trên trục X
-                    stepSize: 5, // Cách nhau ít nhất 5 điểm dữ liệu
-                    maxRotation: 45, // Xoay nhãn 45 độ để dễ đọc
-                    minRotation: 30, // Giảm tối thiểu 30 độ nếu có quá nhiều nhãn
+                    autoSkip: true,
+                    maxTicksLimit: 10,
+                    maxRotation: 45,
+                    minRotation: 30,
                 },
-                grid: {
-                    display: false, // Ẩn lưới dọc
-                },
+                grid: { display: false },
             },
             y: {
                 beginAtZero: true,
@@ -143,3 +144,4 @@ function DashBoardChart({ data }) {
 }
 
 export default DashBoardChart;
+

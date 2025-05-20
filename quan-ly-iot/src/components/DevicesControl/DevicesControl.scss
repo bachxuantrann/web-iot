@@ -3,7 +3,7 @@
     background: #fff;
     border-radius: 10px;
     height: 120px;
-    width: 510px;
+    width: 100% !important;
     text-align: center;
 }
 .control-info {
@@ -13,4 +13,7 @@
 }
 .btn {
     transform: scale(1.5);
+}
+.control-buttons{
+  width: 100% !important;
 }
