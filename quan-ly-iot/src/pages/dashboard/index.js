@@ -42,8 +42,8 @@ function Dashboard() {
     // 2. Kết nối socket để realtime
     const socket = io("http://localhost:5555");
     socket.on("sensorData", (data) => {
-      const tempThreshold = 35;
-      const humidityThreshold = 80;
+      const tempThreshold = 20;
+      const humidityThreshold = 20;
       const lightThreshold = 250;
         console.log(data);
       // cập nhật blinking
@@ -101,7 +101,7 @@ function Dashboard() {
       </Row>
 
       {/* 3 Card thông số latest */}
-      <Row gutter={[10, 10]} style={{ marginTop: 20, marginBottom: 30 }}>
+      <Row gutter={[16, 16]} style={{ marginTop: 20, marginBottom: 20}}>
         <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24}>
           <CardItem data={temp} icon={tempIcon} />
         </Col>

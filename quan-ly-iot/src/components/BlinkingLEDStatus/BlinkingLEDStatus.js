@@ -9,11 +9,10 @@ const ledMap = [
 
 function BlinkingLEDStatus({ blinkingLEDs }) {
     return (
-        <Row gutter={[16, 16]} style={{ width: "100%" }}>
+        <Row gutter={[16, 16]} style={{ width: "100%" }} className="card">
             {ledMap.map((led) => (
                 <Col key={led.id} xxl={8} xl={8} lg={8} md={24} sm={24} xs={24}>
                     <Card
-                        bordered
                         className={`led-card ${blinkingLEDs[led.id] ? "blinking" : ""}`}
                         bodyStyle={{
                             display: "flex",
@@ -27,7 +26,7 @@ function BlinkingLEDStatus({ blinkingLEDs }) {
                     >
                         <h3 style={{ color: led.color, marginBottom: "10px" }}>{led.label}</h3>
                         <span style={{ fontWeight: "bold", fontSize: "18px" }}>
-                            {blinkingLEDs[led.id] ? "Cảnh báo ! 🔆" : "Bình thường"}
+                            {blinkingLEDs[led.id] ? "Cảnh báo ! " : "Bình thường"}
                         </span>
                     </Card>
                 </Col>

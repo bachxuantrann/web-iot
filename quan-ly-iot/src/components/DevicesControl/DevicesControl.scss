@@ -5,6 +5,7 @@
     height: 120px;
     width: 100% !important;
     text-align: center;
+    border: 1px solid #f0f0f0;
 }
 .control-info {
     font-size: 20px;
@@ -16,4 +17,6 @@
 }
 .control-buttons{
   width: 100% !important;
+  margin-left: 1px !important;
+  display: flex;
 }

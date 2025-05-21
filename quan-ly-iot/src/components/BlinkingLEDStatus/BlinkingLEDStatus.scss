@@ -1,20 +1,23 @@
 .led-card {
     transition: all 0.3s ease;
 }
-
-.blinking {
-    animation: blink 1s infinite;
-    border: 2px solid #facc15;
+.card{
+    margin-left: 1px !important;
 }
+.blinking {
+  animation: blink 1s infinite;
+  border: 2px solid #facc15;
+  background-color: #fffbe6; 
+  transform: scale(1.02);    
+}
+
 
 @keyframes blink {
-    0% {
-        box-shadow: 0 0 5px #facc15;
-    }
-    50% {
-        box-shadow: 0 0 15px #facc15;
-    }
-    100% {
-        box-shadow: 0 0 5px #facc15;
-    }
+  0%, 100% {
+    box-shadow: 0 0 10px 2px #facc15;
+  }
+  50% {
+    box-shadow: 0 0 20px 4px #facc15;
+  }
 }
+

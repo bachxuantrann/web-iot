@@ -83,7 +83,7 @@ function DevicesControl() {
     return (
         <Row gutter={[16, 16]} className="control-buttons">
             {devices.map((device) => (
-                <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24} key={device.id}>
+                <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24} key={device.id} >
                     <div className="control-card">
                         <div className="control-info">
                             <p>{device.name}</p>
